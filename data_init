@@ -1,0 +1,973 @@
+//Masterfile to create the database
+//We worked on this a few years ago
+//Created by Kip, Saketh, and OJ(discord name will update)
+
+
+-- Check if the database exists
+DROP DATABASE IF EXISTS bookstoredb;
+-- Create the database
+CREATE DATABASE IF NOT EXISTS bookstoredb;
+USE bookstoredb;
+-- Create the AUTHORS table
+CREATE TABLE AUTHOR_INFO (
+author_id INT PRIMARY KEY AUTO_INCREMENT,
+author_fname VARCHAR(255),
+author_lname VARCHAR(255)
+);
+-- Create the DISCOUNTS table
+CREATE TABLE DISCOUNT (
+discount_id INT PRIMARY KEY AUTO_INCREMENT,
+discount_name VARCHAR(255),
+discount_percentage DECIMAL(20, 2)
+);
+-- Create the BOOKS table
+CREATE TABLE BOOK_INFO (
+book_id INT PRIMARY KEY AUTO_INCREMENT,
+book_title VARCHAR(255),
+book_isbn VARCHAR(20),
+book_publisher VARCHAR(255),
+book_rating DECIMAL(3, 2),
+book_listprice DECIMAL(20, 2),
+discount_id INT,
+FOREIGN KEY (discount_id) REFERENCES DISCOUNT(discount_id)
+);
+-- Create the GENRES table
+CREATE TABLE GENRE (
+genre_id INT PRIMARY KEY AUTO_INCREMENT,
+genre_name VARCHAR(255)
+);
+-- Create a join table to associate books with genres (many-to-many relationship)
+CREATE TABLE BOOKS_GENRES (
+book_id INT,
+genre_id INT,
+PRIMARY KEY (book_id, genre_id),
+FOREIGN KEY (book_id) REFERENCES BOOK_INFO(book_id),
+FOREIGN KEY (genre_id) REFERENCES GENRE(genre_id)
+);
+-- Create a join table to associate authors with books (many-to-many relationship)
+CREATE TABLE AUTHORS_BOOKS (
+author_id INT,
+book_id INT,
+PRIMARY KEY (author_id, book_id),
+FOREIGN KEY (author_id) REFERENCES AUTHOR_INFO(author_id),
+FOREIGN KEY (book_id) REFERENCES BOOK_INFO(book_id)
+);
+-- Create the STORE_INFO table
+CREATE TABLE STORE_INFO (
+store_id INT PRIMARY KEY AUTO_INCREMENT,
+store_name VARCHAR(255),
+store_location VARCHAR(255)
+);
+-- Create the INVENTORY table to associate stores with books
+CREATE TABLE INVENTORY (
+store_id INT,
+book_id INT,
+PRIMARY KEY (store_id, book_id),
+FOREIGN KEY (store_id) REFERENCES STORE_INFO(store_id),
+FOREIGN KEY (book_id) REFERENCES BOOK_INFO(book_id)
+);
+-- Create the CUSTOMER_INFO table
+CREATE TABLE CUSTOMER_INFO (
+cust_id INT PRIMARY KEY AUTO_INCREMENT,
+cust_fname VARCHAR(255),
+cust_lname VARCHAR(255),
+cust_email VARCHAR(255),
+cust_phone VARCHAR(15),
+cust_address VARCHAR(255),
+cust_gold_member_status TINYINT
+);
+-- Create the PAYMENTS table
+CREATE TABLE PAYMENT (
+payment_id INT PRIMARY KEY AUTO_INCREMENT,
+payment_amount DECIMAL(10, 2),
+payment_type VARCHAR(255),
+payment_date DATETIME
+);
+-- Create the ORDERS table
+CREATE TABLE `ORDER` (
+order_id INT PRIMARY KEY AUTO_INCREMENT,
+cust_id INT,
+store_id INT,
+payment_id INT,
+FOREIGN KEY (cust_id) REFERENCES CUSTOMER_INFO(cust_id),
+FOREIGN KEY (store_id) REFERENCES STORE_INFO(store_id),
+FOREIGN KEY (payment_id) REFERENCES PAYMENT(payment_id)
+);
+CREATE TABLE `ORDERLINE` (
+orderline_id INT PRIMARY KEY AUTO_INCREMENT,
+order_id INT,
+book_id INT,
+orderline_qty INT,
+orderline_book_price DECIMAL(20,2),
+FOREIGN KEY (book_id) REFERENCES BOOK_INFO(book_id),
+FOREIGN KEY (order_id) REFERENCES `ORDER`(order_id)
+);
+-- Create the REVIEWS table
+CREATE TABLE REVIEW (
+review_id INT PRIMARY KEY AUTO_INCREMENT,
+cust_id INT,
+book_id INT,
+review_score INT,
+review_title TEXT,
+review_comment TEXT,
+FOREIGN KEY (cust_id) REFERENCES CUSTOMER_INFO(cust_id),
+FOREIGN KEY (book_id) REFERENCES BOOK_INFO(book_id)
+);
+-- BEGIN ADDING DATA HERE --
+-- add genres
+insert into GENRE (genre_name) values ('Thriller');
+insert into GENRE (genre_name) values ('Mystery');
+insert into GENRE (genre_name) values ('Self-Help');
+insert into GENRE (genre_name) values ('Business');
+insert into GENRE (genre_name) values ('Memoir');
+insert into GENRE (genre_name) values ('Travel');
+insert into GENRE (genre_name) values ('Fantasy');
+insert into GENRE (genre_name) values ('Graphic Novel');
+insert into GENRE (genre_name) values ('Science Fiction');
+insert into GENRE (genre_name) values ('Mystery');
+insert into GENRE (genre_name) values ('Business');
+insert into GENRE (genre_name) values ('Crime');
+insert into GENRE (genre_name) values ('Satire');
+insert into GENRE (genre_name) values ('Romance');
+insert into GENRE (genre_name) values ('Memoir');
+insert into GENRE (genre_name) values ('Self-Help');
+insert into GENRE (genre_name) values ('Satire');
+insert into GENRE (genre_name) values ('Cooking');
+insert into GENRE (genre_name) values ('Crime');
+insert into GENRE (genre_name) values ('Dystopian');
+insert into GENRE (genre_name) values ('Western');
+insert into GENRE (genre_name) values ('Memoir');
+insert into GENRE (genre_name) values ('Memoir');
+insert into GENRE (genre_name) values ('Satire');
+-- add discounts
+insert into DISCOUNT (discount_name, discount_percentage) values ('SUMMER2021',
+36);
+insert into DISCOUNT (discount_name, discount_percentage) values ('FALLSALE', 56);
+insert into DISCOUNT (discount_name, discount_percentage) values ('WINTERDEAL',
+39);
+insert into DISCOUNT (discount_name, discount_percentage) values ('SPRINGSAVINGS',
+36);
+insert into DISCOUNT (discount_name, discount_percentage) values ('HOLIDAY20', 73);
+insert into DISCOUNT (discount_name, discount_percentage) values ('FLASHSALE', 12);
+insert into DISCOUNT (discount_name, discount_percentage) values ('CLEARANCE', 40);
+insert into DISCOUNT (discount_name, discount_percentage) values ('BOGO50', 50);
+insert into DISCOUNT (discount_name, discount_percentage) values ('MEMORIALDAY',
+39);
+insert into DISCOUNT (discount_name, discount_percentage) values ('LABORDAY', 56);
+insert into DISCOUNT (discount_name, discount_percentage) values ('BACKTOSCHOOL',
+19);
+insert into DISCOUNT (discount_name, discount_percentage) values ('CYBERMONDAY',
+90);
+insert into DISCOUNT (discount_name, discount_percentage) values ('BLACKFRIDAY',
+22);
+insert into DISCOUNT (discount_name, discount_percentage) values ('NEWYEAR', 27);
+insert into DISCOUNT (discount_name, discount_percentage) values ('PRESIDENTSDAY',
+31);
+insert into DISCOUNT (discount_name, discount_percentage) values ('EASTER', 23);
+insert into DISCOUNT (discount_name, discount_percentage) values ('MOTHERSDAY',
+41);
+insert into DISCOUNT (discount_name, discount_percentage) values ('FATHERSDAY',
+59);
+insert into DISCOUNT (discount_name, discount_percentage) values ('HALLOWEEN', 77);
+insert into DISCOUNT (discount_name, discount_percentage) values ('VETERANSDAY',
+45);
+insert into DISCOUNT (discount_name, discount_percentage) values ('THANKSGIVING',
+28);
+insert into DISCOUNT (discount_name, discount_percentage) values ('CHRISTMAS', 14);
+insert into DISCOUNT (discount_name, discount_percentage) values ('ANNIVERSARY',
+46);
+insert into DISCOUNT (discount_name, discount_percentage) values ('BIRTHDAY', 25);
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Ree', 'Slemmonds');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Nealson', 'Dowd');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Glynn', 'Sinderson');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Cordula', 'Shields');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Spense',
+'Grundwater');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Brok', 'Klimowski');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Finlay',
+'O''Hogertie');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Haven',
+'Longbottom');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Timothee', 'Girtin');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Bernarr',
+'Straffon');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Loria', 'Kippin');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Tomkin', 'Coy');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Emilia', 'Chill');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Lura', 'Kuhlmey');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Dre', 'Jaine');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Connie', 'De Maine');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Manya', 'Keighley');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Mason', 'Cartner');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Cornall', 'Waldram');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Sheilah', 'Oag');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Shay', 'Dahlgren');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Christi', 'Burditt');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Quint', 'Yoakley');
+insert into AUTHOR_INFO (author_fname, author_lname) values ('Ax', 'Firks');
+-- insert books
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('The Great Gatsby', '725900139-9', 3.05,
+'Hansen, Schamberger and Pacocha', 188.86, 14);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('To Kill a Mockingbird', '618732029-8', 3.31,
+'Ebert, Heller and Quitzon', 220.89, 5);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('1984', '146548058-7', 3.93, 'Koepp-Daniel',
+92.24, 2);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('Pride and Prejudice', '108907956-7', 4.6,
+'Keebler and Sons', 269.0, 22);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('The Catcher in the Rye', '423372582-6', 2.62,
+'Swift, Konopelski and Sanford', 66.03, 22);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('The Lord of the Rings', '409431899-2', 3.84,
+'Dietrich, Sauer and Fisher', 176.57, 22);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('Harry Potter and the Sorcerer''s Stone',
+'493433486-6', 4.11, 'Ritchie, Hills and Yundt', 257.85, 10);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('The Hobbit', '834346728-0', 4.82, 'Simonis-
+Dach', 59.03, 13);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('The Da Vinci Code', '054478364-6', 3.53,
+'Carter-Jerde', 102.18, 21);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('The Hunger Games', '140680534-3', 1.17,
+'Abshire Inc', 46.1, 9);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('The Alchemist', '163155613-4', 2.74, 'Bauch,
+Herzog and Wisoky', 101.55, 18);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('The Chronicles of Narnia', '442370325-4',
+2.85, 'Grady Inc', 184.59, 9);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('The Kite Runner', '499122832-8', 3.84,
+'Howell Inc', 107.52, 22);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('The Fault in Our Stars', '431023087-3', 4.81,
+'Strosin-Gorczany', 162.34, 6);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('Brave New World', '772127376-5', 1.84,
+'Thompson Inc', 119.59, 13);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('The Shining', '632402629-9', 3.41, 'Cormier
+Group', 291.24, 23);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('Gone with the Wind', '562911798-X', 1.97,
+'Gutkowski, Abshire and Labadie', 15.92, 20);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('The Color Purple', '913681739-2', 3.12,
+'Carroll and Sons', 170.33, 7);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('The Grapes of Wrath', '507598537-8', 4.6,
+'Kozey, Howell and Pollich', 91.02, 15);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('The Adventures of Huckleberry Finn',
+'119863316-6', 2.61, 'Schinner-Zemlak', 98.34, 5);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('Moby-Dick', '401163961-3', 4.29, 'Emard
+Group', 86.17, 3);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('The Picture of Dorian Gray', '011389356-6',
+4.93, 'Treutel-Krajcik', 250.25, 5);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('The Scarlet Letter', '616082252-7', 3.86,
+'Marks-Mante', 127.27, 3);
+insert into BOOK_INFO (book_title, book_isbn, book_rating, book_publisher,
+book_listprice, discount_id) values ('The Odyssey', '030870741-9', 4.24, 'Botsford-
+Johnston', 145.28, 21);
+insert into AUTHORS_BOOKS (author_id, book_id) values (24,3);
+insert into AUTHORS_BOOKS (author_id, book_id) values (24,1);
+insert into AUTHORS_BOOKS (author_id, book_id) values (23,2);
+insert into AUTHORS_BOOKS (author_id, book_id) values (22,3);
+insert into AUTHORS_BOOKS (author_id, book_id) values (21,4);
+insert into AUTHORS_BOOKS (author_id, book_id) values (20,5);
+insert into AUTHORS_BOOKS (author_id, book_id) values (19,5);
+insert into AUTHORS_BOOKS (author_id, book_id) values (18,5);
+insert into AUTHORS_BOOKS (author_id, book_id) values (17,6);
+insert into AUTHORS_BOOKS (author_id, book_id) values (16,7);
+insert into AUTHORS_BOOKS (author_id, book_id) values (15,8);
+insert into AUTHORS_BOOKS (author_id, book_id) values (14,9);
+insert into AUTHORS_BOOKS (author_id, book_id) values (13,10);
+insert into AUTHORS_BOOKS (author_id, book_id) values (12,11);
+insert into AUTHORS_BOOKS (author_id, book_id) values (11,12);
+insert into AUTHORS_BOOKS (author_id, book_id) values (10,13);
+insert into AUTHORS_BOOKS (author_id, book_id) values (9,14);
+insert into AUTHORS_BOOKS (author_id, book_id) values (8,15);
+insert into AUTHORS_BOOKS (author_id, book_id) values (7,16);
+insert into AUTHORS_BOOKS (author_id, book_id) values (6,17);
+insert into AUTHORS_BOOKS (author_id, book_id) values (5,18);
+insert into AUTHORS_BOOKS (author_id, book_id) values (4,19);
+insert into AUTHORS_BOOKS (author_id, book_id) values (3,20);
+insert into AUTHORS_BOOKS (author_id, book_id) values (2,21);
+insert into AUTHORS_BOOKS (author_id, book_id) values (1,23);
+insert into AUTHORS_BOOKS (author_id, book_id) values (1,22);
+insert into AUTHORS_BOOKS (author_id, book_id) values (1,24);
+-- create the custome-info
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Yancy', 'Antrag', '7388641869',
+'yantrag0@drupal.org', '5146 Lindbergh Place', 2);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Lynnette', 'Danskine',
+'8601492115', 'ldanskine1@telegraph.co.uk', '16 Grover Trail', 2);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Brittany', 'Pappi', '2987030694',
+'bpappi2@narod.ru', '7 Ludington Place', 2);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Bertine', 'Sired', '3989992892',
+'bsired3@quantcast.com', '36224 Farwell Hill', 1);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Tabby', 'McEneny', '4042290093',
+'tmceneny4@nbcnews.com', '02 American Ash Pass', 2);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Julie', 'Moncreiff', '1095619370',
+'jmoncreiff5@nyu.edu', '85 Kedzie Pass', 1);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Heath', 'Holme', '7246079108',
+'hholme6@lycos.com', '23291 Gulseth Hill', 1);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Elliot', 'Eggerton', '2486199566',
+'eeggerton7@mac.com', '5140 Gina Avenue', 1);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Tatiana', 'Harvett', '7189452915',
+'tharvett8@issuu.com', '6 Portage Street', 1);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Shaun', 'Itscowicz', '6569161091',
+'sitscowicz9@live.com', '7 Erie Circle', 2);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Catlee', 'Brain', '1927327179',
+'cbraina@uiuc.edu', '8465 Cardinal Road', 1);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Jessica', 'Haggeth', '6412764438',
+'jhaggethb@hostgator.com', '15 Hazelcrest Avenue', 1);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Mitchell', 'McIlriach',
+'6277055551', 'mmcilriachc@google.it', '1897 Corscot Plaza', 1);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Georgianna', 'Bodle', '2843962138',
+'gbodled@dailymail.co.uk', '0 Kings Point', 2);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Noellyn', 'Gunter', '1352768617',
+'nguntere@sphinn.com', '23323 Morningstar Parkway', 1);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Sianna', 'MacCawley', '2345956759',
+'smaccawleyf@nature.com', '7044 Mccormick Lane', 2);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Jaquith', 'Danielsohn',
+'8529046372', 'jdanielsohng@joomla.org', '0220 Troy Street', 1);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Angelita', 'Cheesworth',
+'7388086362', 'acheesworthh@google.co.uk', '46702 Troy Trail', 1);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Marley', 'Blackborough',
+'1254224035', 'mblackboroughi@delicious.com', '0 Autumn Leaf Lane', 2);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Ansel', 'Winslade', '7757720515',
+'awinsladej@hostgator.com', '77243 Hallows Terrace', 1);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Sophia', 'Searight', '5301322320',
+'ssearightk@stanford.edu', '3354 Lotheville Plaza', 1);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Karlotte', 'Dran', '8571995428',
+'kdranl@amazon.de', '9131 Barby Lane', 1);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Lorene', 'Torbeck', '4087505412',
+'ltorbeckm@google.pl', '29312 Merchant Avenue', 1);
+insert into CUSTOMER_INFO (cust_fname, cust_lname, cust_phone, cust_email,
+cust_address, cust_gold_member_status) values ('Jolie', 'Crowdson', '1409181123',
+'jcrowdsonn@wikimedia.org', '32035 Randy Point', 2);
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (15, 8, 5, 'This book was so bad it killed my fish', 'In my hand I hold $5.
+I will give it to anyone who can explain the plot of this book (or why there is no
+plot) and make my understand why the hell people think it is so amazing.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (17, 11, 4, 'Sed vel enim sit amet nunc viverra dapibus.', 'Proin eu mi.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (19, 22, 1, 'Aenean lectus.', 'Aenean auctor gravida sem.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (22, 2, 3, 'Donec posuere metus vitae ipsum.', 'Mauris ullamcorper purus sit
+amet nulla. Quisque arcu libero, rutrum ac, lobortis vel, dapibus at, diam. Nam
+tristique tortor eu pede.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (24, 14, 3, 'Aenean sit amet justo.', 'Aliquam quis turpis eget elit sodales
+scelerisque.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (12, 9, 3, 'Sed sagittis.', 'Suspendisse potenti. In eleifend quam a odio.
+In hac habitasse platea dictumst. Maecenas ut massa quis augue luctus tincidunt.
+Nulla mollis molestie lorem.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (8, 24, 3, 'In hac habitasse platea dictumst.', 'Nam ultrices, libero non
+mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed
+vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus. Curabitur
+at ipsum ac tellus semper interdum.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (21, 10, 5, 'Suspendisse ornare consequat lectus.', 'Etiam faucibus cursus
+urna. Ut tellus. Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla
+facilisi.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (24, 13, 3, 'Donec vitae nisi.', 'Nam dui.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (16, 14, 5, 'Donec vitae nisi.', 'Proin leo odio, porttitor id, consequat
+in, consequat ut, nulla.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (22, 14, 1, 'Praesent blandit lacinia erat.', 'Integer non velit. Donec diam
+neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum
+primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra,
+magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis
+sapien sapien non mi. Integer ac neque.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (23, 15, 5, 'Nunc nisl.', 'In quis justo. Maecenas rhoncus aliquam lacus.
+Morbi quis tortor id nulla ultrices aliquet.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (22, 17, 1, 'Mauris lacinia sapien quis libero.', 'Ut at dolor quis odio
+consequat varius. Integer ac leo.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (21, 7, 2, 'Maecenas tristique, est et tempus semper, est quam pharetra
+magna, ac consequat metus sapien ut nunc.', 'Nullam varius. Nulla facilisi. Cras
+non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (8, 10, 2, 'In sagittis dui vel nisl.', 'Pellentesque ultrices mattis odio.
+Donec vitae nisi. Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper
+augue, a suscipit nulla elit ac nulla.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (21, 18, 4, 'Morbi a ipsum.', 'Nunc nisl.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (9, 4, 5, 'Nullam porttitor lacus at turpis.', 'Nulla ac enim. In tempor,
+turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh
+ligula nec sem. Duis aliquam convallis nunc. Proin at turpis a pede posuere
+nonummy.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (23, 2, 1, 'Sed accumsan felis.', 'Vivamus vel nulla eget eros elementum
+pellentesque. Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue
+eget, semper rutrum, nulla. Nunc purus.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (17, 2, 5, 'Donec quis orci eget orci vehicula condimentum.', 'Donec quis
+orci eget orci vehicula condimentum.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (2, 22, 2, 'Vivamus tortor.', 'Mauris enim leo, rhoncus sed, vestibulum sit
+amet, cursus id, turpis.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (22, 17, 2, 'Integer ac leo.', 'Vivamus vel nulla eget eros elementum
+pellentesque. Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue
+eget, semper rutrum, nulla.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (10, 18, 3, 'Vestibulum rutrum rutrum neque.', 'Nulla mollis molestie
+lorem.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (2, 14, 4, 'Donec dapibus.', 'Mauris enim leo, rhoncus sed, vestibulum sit
+amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus
+dapibus augue, vel accumsan tellus nisi eu orci.');
+insert into REVIEW (cust_id, book_id, review_score, review_title, review_comment)
+values (22, 4, 3, 'Quisque porta volutpat erat.', 'Nulla nisl. Nunc nisl. Duis
+bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede
+justo eu massa.');
+-- insert store info --
+insert into STORE_INFO (store_name, store_location) values ('Bauch, Ratke and
+Stanton', '8288 Northport Center');
+insert into STORE_INFO (store_name, store_location) values ('Dietrich, Abernathy
+and Marks', '762 Jay Street');
+insert into STORE_INFO (store_name, store_location) values ('Murray-Pfeffer', '14
+Coolidge Circle');
+insert into STORE_INFO (store_name, store_location) values ('Schmeler, Carroll and
+Will', '93933 Karstens Road');
+insert into STORE_INFO (store_name, store_location) values ('Sanford, Blanda and
+Treutel', '1894 Monterey Point');
+insert into STORE_INFO (store_name, store_location) values ('Heathcote, Schaefer
+and Bartell', '510 Carpenter Place');
+insert into STORE_INFO (store_name, store_location) values ('Greenfelder-
+Balistreri', '17154 Monument Plaza');
+insert into STORE_INFO (store_name, store_location) values ('Waters, Stamm and
+Schmitt', '2347 Banding Trail');
+insert into STORE_INFO (store_name, store_location) values ('Kohler Group', '009
+Petterle Crossing');
+insert into STORE_INFO (store_name, store_location) values ('Schultz, Skiles and
+Schinner', '0 Merchant Drive');
+insert into STORE_INFO (store_name, store_location) values ('Schuppe-Bergnaum',
+'183 Glendale Lane');
+insert into STORE_INFO (store_name, store_location) values ('Howell, Larkin and
+Lehner', '01 Leroy Crossing');
+insert into STORE_INFO (store_name, store_location) values ('Abshire-Wolff', '99
+Colorado Trail');
+insert into STORE_INFO (store_name, store_location) values ('Ritchie, Kerluke and
+Ondricka', '988 Maywood Point');
+insert into STORE_INFO (store_name, store_location) values ('Schumm, Wyman and
+Koepp', '5632 Vernon Terrace');
+insert into STORE_INFO (store_name, store_location) values ('Roberts, Leffler and
+Koch', '6 Vera Road');
+insert into STORE_INFO (store_name, store_location) values ('Brown, Brown and
+Schumm', '90 Dryden Trail');
+insert into STORE_INFO (store_name, store_location) values ('Feil Inc', '163 Bunker
+Hill Parkway');
+insert into STORE_INFO (store_name, store_location) values ('Schulist-Schuster',
+'20509 Petterle Road');
+insert into STORE_INFO (store_name, store_location) values ('Batz, Okuneva and
+Tromp', '78149 Redwing Crossing');
+insert into STORE_INFO (store_name, store_location) values ('Stehr, Wehner and
+Lueilwitz', '6816 Redwing Drive');
+insert into STORE_INFO (store_name, store_location) values ('Gibson-Steuber',
+'33925 Maple Crossing');
+insert into STORE_INFO (store_name, store_location) values ('Okuneva LLC', '65
+Pierstorff Place');
+insert into STORE_INFO (store_name, store_location) values ('Tromp and Sons', '942
+Pond Lane');
+-- payment inserts
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(1, 9738378.35, 'PayPal', '2002-01-04 14:48:15');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(2, 6642983.5, 'Credit Card', '2017-04-28 20:59:51');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(3, 3695557.34, 'PayPal', '2004-01-09 09:26:51');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(4, 6693911.23, 'Debit Card', '2016-07-11 02:11:44');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(5, 6170257.8, 'Debit Card', '2019-08-31 10:03:50');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(6, 2317053.08, 'Credit Card', '2022-10-16 21:53:57');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(7, 9401327.56, 'Cash', '2014-08-20 15:33:55');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(8, 4549909.72, 'Cash', '2018-01-29 02:52:49');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(9, 1984686.92, 'Debit Card', '2000-02-23 17:15:27');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(10, 2686441.82, 'Cash', '2004-03-31 11:50:59');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(11, 6166443.7, 'Check', '2018-05-21 01:47:22');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(12, 7363395.57, 'Check', '2019-09-13 19:36:03');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(13, 5845698.69, 'Check', '2018-06-01 22:31:08');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(14, 8828270.11, 'Credit Card', '2007-05-21 07:54:05');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(15, 6519010.65, 'Check', '2002-04-24 14:07:24');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(16, 5900923.45, 'Cash', '2012-12-03 08:03:59');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(17, 7499061.5, 'Check', '2014-07-29 13:51:52');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(18, 3077288.17, 'Debit Card', '2014-08-28 01:18:21');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(19, 9432420.34, 'Cash', '2018-01-14 00:36:35');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(20, 9761141.88, 'Credit Card', '2010-05-16 21:25:51');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(21, 4169681.26, 'Cash', '2016-01-12 08:20:51');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(22, 9583368.14, 'Cash', '2011-07-19 15:50:24');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(23, 6685491.35, 'Debit Card', '2020-03-16 04:43:07');
+insert into PAYMENT (payment_id, payment_amount, payment_type, payment_date) values
+(24, 7910002.67, 'Debit Card', '2013-12-13 04:18:24');
+-- order inserts
+insert into `ORDER` (cust_id, store_id, payment_id) values (17, 19, 1);
+insert into `ORDER` (cust_id, store_id, payment_id) values (17, 14, 2);
+insert into `ORDER` (cust_id, store_id, payment_id) values (18, 21, 3);
+insert into `ORDER` (cust_id, store_id, payment_id) values (16, 13, 4);
+insert into `ORDER` (cust_id, store_id, payment_id) values (5, 11, 5);
+insert into `ORDER` (cust_id, store_id, payment_id) values (6, 13, 6);
+insert into `ORDER` (cust_id, store_id, payment_id) values (13, 10, 7);
+insert into `ORDER` (cust_id, store_id, payment_id) values (6, 20, 8);
+insert into `ORDER` (cust_id, store_id, payment_id) values (9, 21, 9);
+insert into `ORDER` (cust_id, store_id, payment_id) values (16, 10, 10);
+insert into `ORDER` (cust_id, store_id, payment_id) values (3, 24, 11);
+insert into `ORDER` (cust_id, store_id, payment_id) values (19, 12, 12);
+insert into `ORDER` (cust_id, store_id, payment_id) values (9, 8, 13);
+insert into `ORDER` (cust_id, store_id, payment_id) values (16, 1, 14);
+insert into `ORDER` (cust_id, store_id, payment_id) values (10, 19, 15);
+insert into `ORDER` (cust_id, store_id, payment_id) values (20, 17, 16);
+insert into `ORDER` (cust_id, store_id, payment_id) values (8, 1, 17);
+insert into `ORDER` (cust_id, store_id, payment_id) values (5, 16, 18);
+insert into `ORDER` (cust_id, store_id, payment_id) values (15, 19, 19);
+insert into `ORDER` (cust_id, store_id, payment_id) values (13, 14, 20);
+insert into `ORDER` (cust_id, store_id, payment_id) values (18, 3, 21);
+insert into `ORDER` (cust_id, store_id, payment_id) values (20, 5, 22);
+insert into `ORDER` (cust_id, store_id, payment_id) values (7, 11, 23);
+insert into `ORDER` (cust_id, store_id, payment_id) values (4, 19, 24);
+-- orderline inserts
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (1, 19, 9);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (1, 18, 30);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (1, 20, 1);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (1, 10, 23);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (1, 19, 18);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (2, 4, 4);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (2, 18, 21);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (2, 12, 9);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (2, 7, 18);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (2, 17, 23);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (3, 11, 11);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (3, 10, 1);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (3, 21, 25);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (3, 20, 19);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (3, 11, 12);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (4, 9, 23);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (4, 24, 29);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (4, 18, 25);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (4, 4, 5);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (4, 9, 20);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (5, 7, 21);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (5, 14, 23);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (5, 2, 7);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (5, 20, 17);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (5, 1, 3);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (6, 19, 13);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (6, 24, 10);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (6, 19, 14);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (6, 1, 28);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (6, 3, 7);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (7, 1, 19);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (7, 3, 8);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (7, 19, 24);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (7, 15, 7);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (7, 12, 29);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (8, 18, 7);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (8, 24, 27);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (8, 18, 30);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (8, 8, 30);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (8, 9, 16);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (9, 2, 15);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (9, 17, 5);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (9, 13, 10);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (9, 11, 13);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (9, 1, 14);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (10, 4, 4);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (10, 9, 5);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (10, 10, 8);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (10, 19, 16);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (10, 15, 4);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (11, 14, 6);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (11, 24, 12);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (11, 10, 4);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (11, 2, 21);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (11, 1, 14);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (12, 15, 25);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (12, 23, 22);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (12, 7, 18);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (12, 10, 28);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (12, 20, 21);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (13, 24, 6);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (13, 22, 29);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (13, 11, 12);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (13, 1, 9);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (13, 2, 6);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (14, 8, 24);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (14, 1, 10);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (14, 3, 24);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (14, 3, 18);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (14, 3, 17);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (15, 9, 29);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (15, 19, 2);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (15, 5, 12);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (15, 22, 21);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (15, 15, 14);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (16, 2, 8);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (16, 20, 12);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (16, 8, 8);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (16, 14, 4);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (16, 8, 17);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (17, 3, 9);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (17, 9, 27);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (17, 3, 28);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (17, 5, 4);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (17, 3, 1);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (18, 18, 4);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (18, 22, 16);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (18, 15, 4);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (18, 20, 17);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (18, 14, 7);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (19, 15, 8);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (19, 23, 15);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (19, 9, 3);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (19, 24, 30);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (19, 18, 19);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (20, 10, 19);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (20, 18, 9);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (20, 9, 3);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (20, 8, 16);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (20, 23, 11);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (21, 6, 2);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (21, 23, 17);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (21, 15, 14);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (21, 19, 2);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (21, 13, 24);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (22, 2, 3);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (22, 8, 19);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (22, 16, 17);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (22, 21, 10);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (22, 10, 27);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (23, 18, 14);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (23, 2, 27);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (23, 13, 23);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (23, 23, 11);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (23, 4, 2);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (24, 13, 16);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (24, 9, 22);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (24, 1, 20);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (24, 10, 30);
+INSERT INTO `ORDERLINE` (order_id, book_id, orderline_qty) VALUES (24, 10, 16);
+insert into BOOKS_GENRES (genre_id, book_id) values (16, 9);
+insert into BOOKS_GENRES (genre_id, book_id) values (19, 6);
+insert into BOOKS_GENRES (genre_id, book_id) values (24, 24);
+insert into BOOKS_GENRES (genre_id, book_id) values (13, 16);
+insert into BOOKS_GENRES (genre_id, book_id) values (11, 11);
+insert into BOOKS_GENRES (genre_id, book_id) values (16, 18);
+insert into BOOKS_GENRES (genre_id, book_id) values (22, 5);
+insert into BOOKS_GENRES (genre_id, book_id) values (21, 19);
+insert into BOOKS_GENRES (genre_id, book_id) values (22, 7);
+insert into BOOKS_GENRES (genre_id, book_id) values (6, 22);
+insert into BOOKS_GENRES (genre_id, book_id) values (13, 20);
+insert into BOOKS_GENRES (genre_id, book_id) values (2, 9);
+insert into BOOKS_GENRES (genre_id, book_id) values (11, 8);
+insert into BOOKS_GENRES (genre_id, book_id) values (16, 4);
+insert into BOOKS_GENRES (genre_id, book_id) values (6, 13);
+insert into BOOKS_GENRES (genre_id, book_id) values (11, 21);
+insert into BOOKS_GENRES (genre_id, book_id) values (6, 3);
+insert into BOOKS_GENRES (genre_id, book_id) values (15, 2);
+insert into BOOKS_GENRES (genre_id, book_id) values (13, 6);
+insert into BOOKS_GENRES (genre_id, book_id) values (11, 18);
+insert into BOOKS_GENRES (genre_id, book_id) values (11, 2);
+insert into BOOKS_GENRES (genre_id, book_id) values (15, 20);
+insert into BOOKS_GENRES (genre_id, book_id) values (12, 9);
+insert into BOOKS_GENRES (genre_id, book_id) values (6, 1);
+-- insert inventory
+insert into INVENTORY (store_id, book_id) values (19, 15);
+insert into INVENTORY (store_id, book_id) values (12, 3);
+insert into INVENTORY (store_id, book_id) values (2, 9);
+insert into INVENTORY (store_id, book_id) values (2, 18);
+insert into INVENTORY (store_id, book_id) values (2, 22);
+insert into INVENTORY (store_id, book_id) values (1, 23);
+insert into INVENTORY (store_id, book_id) values (16, 4);
+insert into INVENTORY (store_id, book_id) values (10, 21);
+insert into INVENTORY (store_id, book_id) values (13, 15);
+insert into INVENTORY (store_id, book_id) values (12, 16);
+insert into INVENTORY (store_id, book_id) values (14, 6);
+insert into INVENTORY (store_id, book_id) values (17, 13);
+insert into INVENTORY (store_id, book_id) values (2, 20);
+insert into INVENTORY (store_id, book_id) values (7, 6);
+insert into INVENTORY (store_id, book_id) values (22, 6);
+insert into INVENTORY (store_id, book_id) values (19, 20);
+insert into INVENTORY (store_id, book_id) values (22, 22);
+insert into INVENTORY (store_id, book_id) values (16, 11);
+insert into INVENTORY (store_id, book_id) values (12, 1);
+insert into INVENTORY (store_id, book_id) values (6, 14);
+insert into INVENTORY (store_id, book_id) values (20, 6);
+insert into INVENTORY (store_id, book_id) values (6, 3);
+insert into INVENTORY (store_id, book_id) values (2, 16);
+insert into INVENTORY (store_id, book_id) values (8, 15);
+insert into INVENTORY (store_id, book_id) values (20, 5);
+insert into INVENTORY (store_id, book_id) values (2, 13);
+insert into INVENTORY (store_id, book_id) values (23, 23);
+insert into INVENTORY (store_id, book_id) values (12, 15);
+insert into INVENTORY (store_id, book_id) values (1, 12);
+insert into INVENTORY (store_id, book_id) values (10, 23);
+insert into INVENTORY (store_id, book_id) values (10, 8);
+insert into INVENTORY (store_id, book_id) values (10, 16);
+insert into INVENTORY (store_id, book_id) values (15, 9);
+insert into INVENTORY (store_id, book_id) values (21, 6);
+insert into INVENTORY (store_id, book_id) values (19, 21);
+insert into INVENTORY (store_id, book_id) values (11, 8);
+insert into INVENTORY (store_id, book_id) values (24, 6);
+insert into INVENTORY (store_id, book_id) values (7, 22);
+insert into INVENTORY (store_id, book_id) values (17, 22);
+insert into INVENTORY (store_id, book_id) values (6, 12);
+insert into INVENTORY (store_id, book_id) values (17, 12);
+insert into INVENTORY (store_id, book_id) values (13, 23);
+insert into INVENTORY (store_id, book_id) values (16, 7);
+insert into INVENTORY (store_id, book_id) values (3, 5);
+insert into INVENTORY (store_id, book_id) values (16, 15);
+insert into INVENTORY (store_id, book_id) values (16, 2);
+insert into INVENTORY (store_id, book_id) values (6, 19);
+insert into INVENTORY (store_id, book_id) values (23, 21);
+insert into INVENTORY (store_id, book_id) values (7, 9);
+insert into INVENTORY (store_id, book_id) values (24, 15);
+insert into INVENTORY (store_id, book_id) values (19, 13);
+insert into INVENTORY (store_id, book_id) values (6, 21);
+insert into INVENTORY (store_id, book_id) values (15, 16);
+insert into INVENTORY (store_id, book_id) values (3, 6);
+insert into INVENTORY (store_id, book_id) values (20, 13);
+insert into INVENTORY (store_id, book_id) values (3, 18);
+insert into INVENTORY (store_id, book_id) values (7, 4);
+insert into INVENTORY (store_id, book_id) values (17, 16);
+insert into INVENTORY (store_id, book_id) values (10, 5);
+insert into INVENTORY (store_id, book_id) values (21, 22);
+insert into INVENTORY (store_id, book_id) values (12, 7);
+insert into INVENTORY (store_id, book_id) values (1, 18);
+insert into INVENTORY (store_id, book_id) values (3, 8);
+insert into INVENTORY (store_id, book_id) values (10, 13);
+insert into INVENTORY (store_id, book_id) values (18, 7);
+insert into INVENTORY (store_id, book_id) values (7, 5);
+insert into INVENTORY (store_id, book_id) values (5, 18);
+insert into INVENTORY (store_id, book_id) values (4, 9);
+insert into INVENTORY (store_id, book_id) values (23, 20);
+insert into INVENTORY (store_id, book_id) values (14, 14);
+insert into INVENTORY (store_id, book_id) values (23, 10);
+insert into INVENTORY (store_id, book_id) values (16, 20);
+insert into INVENTORY (store_id, book_id) values (21, 23);
+insert into INVENTORY (store_id, book_id) values (22, 13);
+insert into INVENTORY (store_id, book_id) values (20, 8);
+insert into INVENTORY (store_id, book_id) values (18, 2);
+insert into INVENTORY (store_id, book_id) values (11, 21);
+insert into INVENTORY (store_id, book_id) values (9, 9);
+insert into INVENTORY (store_id, book_id) values (17, 6);
+insert into INVENTORY (store_id, book_id) values (22, 10);
+insert into INVENTORY (store_id, book_id) values (5, 24);
+insert into INVENTORY (store_id, book_id) values (23, 17);
+insert into INVENTORY (store_id, book_id) values (23, 13);
+insert into INVENTORY (store_id, book_id) values (6, 11);
+insert into INVENTORY (store_id, book_id) values (3, 13);
+insert into INVENTORY (store_id, book_id) values (10, 11);
+insert into INVENTORY (store_id, book_id) values (1, 24);
+insert into INVENTORY (store_id, book_id) values (13, 14);
+insert into INVENTORY (store_id, book_id) values (8, 14);
+-- saketh - calculte appropriate orderline prices
+UPDATE ORDERLINE
+JOIN BOOK_INFO bi ON ORDERLINE.book_id = bi.book_id
+JOIN DISCOUNT d ON bi.discount_id = d.discount_id
+SET ORDERLINE.orderline_book_price = FORMAT((bi.book_listprice - (bi.book_listprice
+* d.discount_percentage / 100)),2);
+-- saketh - update appropriate payment amounts
+UPDATE PAYMENT p
+SET p.payment_amount = (
+SELECT
+SUM(ol.orderline_book_price * ol.orderline_qty) AS order_total_amount
+FROM
+`ORDER` o
+JOIN
+ORDERLINE ol ON o.order_id = ol.order_id
+WHERE
+p.payment_id = o.payment_id
+GROUP BY
+o.order_id
+);
+-- saketh- add view to see all aothrus of book
+CREATE VIEW BooksWithAuthors AS
+SELECT
+b.book_id,
+b.book_title,
+b.book_isbn,
+b.book_publisher,
+b.book_rating,
+b.book_listprice,
+GROUP_CONCAT(a.author_fname, ' ', a.author_lname SEPARATOR ', ') AS authors
+FROM
+BOOK_INFO b
+JOIN
+AUTHORS_BOOKS ab ON b.book_id = ab.book_id
+JOIN
+AUTHOR_INFO a ON ab.author_id = a.author_id
+GROUP BY
+b.book_id, b.book_title, b.book_isbn, b.book_publisher, b.book_rating,
+b.book_listprice;
+--fardin 7,8 :
+-- Trigger on insert. An author who is inserted into Author_INFO will have a book
+precreated for them in the Authors_BOOKS table with a place holder value
+DELIMITER //
+CREATE TRIGGER InsertNewAuthorBook
+AFTER INSERT ON AUTHOR_INFO
+FOR EACH ROW
+BEGIN
+DECLARE authorExists INT;
+-- Check if the author_id exists in AUTHORS_BOOKS
+SELECT COUNT(*) INTO authorExists FROM AUTHORS_BOOKS WHERE author_id =
+NEW.author_id;
+IF authorExists = 0 THEN
+-- Insert a valid book_id in AUTHORS_BOOKS associated with the author
+INSERT INTO AUTHORS_BOOKS (author_id, book_id) VALUES (NEW.author_id,
+(SELECT book_id FROM BOOK_INFO LIMIT 1)); -- Selects a valid book_id from BOOK_INFO
+END IF;
+END;
+//
+DELIMITER ;
+-- Insert an author into AUTHOR_INFO
+INSERT INTO AUTHOR_INFO (author_id, author_fname, author_lname) VALUES (100, 'New',
+'Author');
+SELECT * FROM AUTHORS_BOOKS
+DELIMITER //
+CREATE PROCEDURE UpdateCapitalizedNames()
+BEGIN
+DECLARE done INT DEFAULT FALSE;
+DECLARE firstName VARCHAR(255);
+DECLARE lastName VARCHAR(255);
+DECLARE newFirstName VARCHAR(255);
+DECLARE newLastName VARCHAR(255);
+DECLARE cur CURSOR FOR SELECT author_fname, author_lname FROM AUTHOR_INFO;
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+OPEN cur;
+read_loop: LOOP
+FETCH cur INTO firstName, lastName;
+IF done THEN
+LEAVE read_loop;
+END IF;
+-- Check if the first letter of fname and lname are not capitalized
+IF ASCII(LEFT(firstName, 1)) NOT BETWEEN ASCII('A') AND ASCII('Z') THEN
+SET newFirstName = CONCAT(UPPER(LEFT(firstName, 1)),
+SUBSTRING(firstName, 2));
+ELSE
+SET newFirstName = firstName;
+END IF;
+IF ASCII(LEFT(lastName, 1)) NOT BETWEEN ASCII('A') AND ASCII('Z') THEN
+SET newLastName = CONCAT(UPPER(LEFT(lastName, 1)), SUBSTRING(lastName,
+2));
+ELSE
+SET newLastName = lastName;
+END IF;
+-- Update the row with capitalized names
+UPDATE AUTHOR_INFO SET author_fname = newFirstName, author_lname =
+newLastName WHERE author_fname = firstName AND author_lname = lastName;
+END LOOP;
+CLOSE cur;
+END;
+//
+DELIMITER ;
+INSERT INTO AUTHOR_INFO (author_id, author_fname, author_lname) VALUES (200,
+'lower', 'case');
+SELECT * FROM AUTHOR_INFO;
+CALL UpdateCapitalizedNames();
+SELECT * FROM AUTHOR_INFO;
+-- backup triggers and procedurers
+DELIMITER //
+CREATE PROCEDURE CalculateTotalAmount(IN custID INT, OUT totalAmount DECIMAL(10,
+2))
+BEGIN
+SELECT SUM(ol.orderline_qty * ol.orderline_book_price) INTO totalAmount
+FROM `ORDER` o
+JOIN `ORDERLINE` ol ON o.order_id = ol.order_id
+WHERE o.cust_id = custID;
+END //
+DELIMITER ;
+DELIMITER //
+CREATE PROCEDURE UpdateBookRatings(IN percentage DECIMAL(5, 2))
+BEGIN
+DECLARE done INT DEFAULT FALSE;
+DECLARE bookID INT;
+DECLARE cur CURSOR FOR SELECT book_id FROM BOOK_INFO;
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+OPEN cur;
+read_loop: LOOP
+FETCH cur INTO bookID;
+IF done THEN
+LEAVE read_loop;
+END IF;
+UPDATE BOOK_INFO SET book_rating = book_rating + (book_rating *
+percentage / 100) WHERE book_id = bookID;
+END LOOP;
+CLOSE cur;
+END //
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER UpdateGenreRating
+AFTER INSERT ON REVIEW
+FOR EACH ROW
+BEGIN
+DECLARE avgRating DECIMAL(3, 2);
+SELECT AVG(review_score) INTO avgRating FROM REVIEW WHERE book_id =
+NEW.book_id;
+UPDATE GENRE g
+JOIN BOOKS_GENRES bg ON g.genre_id = bg.genre_id
+SET g.genre_avg_rating = avgRating
+WHERE bg.book_id = NEW.book_id;
+END;
+DELIMITER ;
+
